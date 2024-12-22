@@ -85,8 +85,10 @@ class _SimpleSegmentationModel(nn.Module):
             if mode == 'TARGET':
                     # updata memory
                     target_tar = preds_stage2.detach().max(dim=1)[1]
-                    entropy = prob_2_entropy(F.softmax(preds_stage2.detach()))
-                    entropy = torch.sum(entropy, axis=1)  # 2,512,512
+                    # Old code that does not specify dim may cause the softmax function to not work as expected.
+                    # torch.allclose(F.softmax(preds_stage2.detach(), dim=1), F.softmax(preds_stage2.detach()))
+                    entropy = prob_2_entropy(F.softmax(preds_stage2.detach(), dim=1))
+                    entropy = torch.sum(entropy, dim=1)  # 2,512,512
                     # # # #
                     # # #高斯爬升曲线参数
                     # t = i_iter * 10e-5
